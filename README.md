@@ -1,23 +1,23 @@
 # Spotify Streaming Trends Dashboard
 
-**Autor:** Laura Blanco | **Stack:** Python · Spotipy · Pandas · Plotly · Streamlit
+**Autor:** Laura Blanco | **Stack:** Python · pylast · Pandas · Plotly · Streamlit
 **Demo:** *(URL pública disponible al deployar en Streamlit Cloud)*
 
-Un dashboard interactivo que analiza tendencias de streaming musical usando la Spotify Web API y datos históricos abiertos. Muestra cómo evolucionan géneros, artistas y mercados a lo largo del tiempo, con foco en el mercado LATAM.
+Un dashboard interactivo que analiza tendencias de streaming musical combinando dos fuentes: el Kaggle Spotify Tracks Dataset (~600k canciones con audio features) y la Last.fm API para datos de artistas en tiempo real por país LATAM.
 
 ---
 
 ## Análisis incluidos
 
-| Sección | Descripción |
-|---------|-------------|
-| Visión general | KPIs globales: total canciones, géneros, popularidad promedio, track #1 |
-| Popularidad por género | Bar chart horizontal: top N géneros por popularidad promedio + nº de tracks |
-| Audio features vs. popularidad | Scatter interactivo: cualquier par de features, coloreado por popularidad |
-| Matriz de correlación | Correlación de Pearson entre todas las audio features y la popularidad |
-| Top artistas LATAM | Artistas líderes por seguidores según género (vía Spotify API) |
-| Distribución de popularidad | Box plot: spread de popularidad por género (mediana, IQR, outliers) |
-| Radar de audio features | Perfil comparativo de features promedio entre géneros seleccionados |
+| Sección | Fuente | Descripción |
+|---------|--------|-------------|
+| Visión general | Kaggle | KPIs: total canciones, géneros, popularidad promedio, track #1 |
+| Popularidad por género | Kaggle | Bar chart: top N géneros por popularidad promedio + nº de tracks |
+| Audio features vs. popularidad | Kaggle | Scatter interactivo entre cualquier par de features |
+| Matriz de correlación | Kaggle | Correlación de Pearson entre audio features y popularidad |
+| Top artistas LATAM | Last.fm API | Artistas más escuchados por país (Colombia, México, Argentina…) |
+| Distribución de popularidad | Kaggle | Box plot: spread de popularidad por género (mediana, IQR, outliers) |
+| Radar de audio features | Kaggle | Perfil comparativo de features promedio entre géneros |
 
 ---
 
@@ -25,7 +25,7 @@ Un dashboard interactivo que analiza tendencias de streaming musical usando la S
 
 > *Esta sección se completa al finalizar el análisis. Se documentarán 3 hallazgos concretos con visualizaciones de soporte.*
 
-**Hallazgo 1 — Evolución de géneros en LATAM:**
+**Hallazgo 1 — Géneros y popularidad en el dataset:**
 *(placeholder)*
 
 **Hallazgo 2 — Audio features y popularidad:**
@@ -49,21 +49,22 @@ cd spotify-trends-dashboard
 pip install -r requirements.txt
 ```
 
-### 3. Configurar credenciales de Spotify
+### 3. Configurar API key de Last.fm
 Crea un archivo `.env` en la raíz del proyecto (nunca lo subas a GitHub):
 ```
-SPOTIFY_CLIENT_ID=tu_client_id_aqui
-SPOTIFY_CLIENT_SECRET=tu_client_secret_aqui
+LASTFM_API_KEY=tu_api_key_aqui
 ```
 
-Para obtener estas credenciales:
-1. Ve a [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
-2. Crea una nueva app
-3. Copia el `Client ID` y `Client Secret`
+Para obtener la API key (es gratuita):
+1. Crea una cuenta en [last.fm](https://www.last.fm/join)
+2. Ve a [last.fm/api/account/create](https://www.last.fm/api/account/create)
+3. Completa el formulario (nombre de app: cualquiera, ej. "music-portfolio")
+4. Copia el `API Key` generado
 
-### 4. Descargar el dataset histórico
-- Ve a [Kaggle — Spotify Tracks Dataset](https://www.kaggle.com/datasets/maharshipandya/spotify-tracks-dataset)
-- Descarga el CSV y colócalo en `data/kaggle_tracks.csv`
+### 4. Descargar el dataset
+- Busca en Kaggle: **"Spotify Tracks Dataset"** y descarga el CSV
+- Colócalo en `data/kaggle_tracks.csv`
+- El archivo es >100MB, por eso está excluido del repositorio vía `.gitignore`
 
 ### 5. Ejecutar el dashboard
 ```bash
@@ -74,14 +75,15 @@ streamlit run app.py
 
 ## Deploy en Streamlit Cloud
 
-1. Haz push del repositorio a GitHub (asegúrate de que `.env` esté en `.gitignore`)
+1. Haz push del repositorio a GitHub (`.env` y el CSV están en `.gitignore`)
 2. Ve a [share.streamlit.io](https://share.streamlit.io) y conecta tu repositorio
-3. En la configuración de la app, agrega los secrets:
+3. En **Settings → Secrets**, agrega:
+   ```toml
+   LASTFM_API_KEY = "tu_api_key_aqui"
    ```
-   SPOTIFY_CLIENT_ID = "tu_client_id"
-   SPOTIFY_CLIENT_SECRET = "tu_client_secret"
-   ```
-4. Streamlit Cloud generará una URL pública automáticamente
+4. El dashboard con el CSV grande requiere subirlo a un lugar accesible o usar un subset. Ver nota abajo.
+
+> **Nota sobre el dataset en Streamlit Cloud:** El CSV de Kaggle supera los 100MB y no puede subirse directamente a GitHub. Opciones: (1) subir un subset de 50k filas al repo, (2) hospedar el CSV en Google Drive y descargarlo al iniciar la app.
 
 ---
 
@@ -89,11 +91,10 @@ streamlit run app.py
 
 ```
 spotify-trends-dashboard/
-├── app.py                  # Dashboard principal
-├── utils/
-│   └── spotify_client.py   # Funciones de consulta a la API
+├── app.py                  # Dashboard principal (Streamlit)
 ├── data/
 │   └── kaggle_tracks.csv   # Dataset histórico (no versionado en git)
+├── utils/                  # Módulos auxiliares (en desarrollo)
 ├── requirements.txt
 ├── .env.example            # Template de variables de entorno
 ├── .gitignore
@@ -105,8 +106,8 @@ spotify-trends-dashboard/
 
 ## Fuentes de datos
 
-- **Spotify Web API** — datos actuales de artistas, tracks y audio features
-- **Kaggle "Spotify Tracks Dataset"** (Maharshi Pandya) — histórico de ~600k canciones con audio features (1921–2020)
+- **Last.fm API** (via pylast) — top artistas por país LATAM en tiempo real, oyentes mensuales, géneros
+- **Kaggle Spotify Tracks Dataset** — ~600k canciones con audio features completas (danceability, energy, valence, etc.)
 
 ---
 
