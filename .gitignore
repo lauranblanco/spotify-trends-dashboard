@@ -1,0 +1,6 @@
+.env
+data/kaggle_tracks.csv
+data/cached_api/
+__pycache__/
+*.pyc
+.DS_Store
