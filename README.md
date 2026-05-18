@@ -61,10 +61,8 @@ Para obtener la API key (es gratuita):
 3. Completa el formulario (nombre de app: cualquiera, ej. "music-portfolio")
 4. Copia el `API Key` generado
 
-### 4. Descargar el dataset
-- Busca en Kaggle: **"Spotify Tracks Dataset"** y descarga el CSV
-- Colócalo en `data/kaggle_tracks.csv`
-- El archivo es >100MB, por eso está excluido del repositorio vía `.gitignore`
+### 4. Dataset
+El CSV ya está incluido en el repositorio en `data/kaggle_tracks.csv`.
 
 ### 5. Ejecutar el dashboard
 ```bash
@@ -83,7 +81,6 @@ streamlit run app.py
    ```
 4. El dashboard con el CSV grande requiere subirlo a un lugar accesible o usar un subset. Ver nota abajo.
 
-> **Nota sobre el dataset en Streamlit Cloud:** El CSV de Kaggle supera los 100MB y no puede subirse directamente a GitHub. Opciones: (1) subir un subset de 50k filas al repo, (2) hospedar el CSV en Google Drive y descargarlo al iniciar la app.
 
 ---
 
