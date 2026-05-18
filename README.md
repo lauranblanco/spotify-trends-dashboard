@@ -1,7 +1,7 @@
 # Spotify Streaming Trends Dashboard
 
-**Autor:** Laura Blanco | **Stack:** Python · pylast · Pandas · Plotly · Streamlit
-**Demo:** *(URL pública disponible al deployar en Streamlit Cloud)*
+**Autor:** Laura Blanco | **Stack:** Python · pylast · Pandas · Plotly · Streamlit |
+**Demo:** *https://spotify-trends-dashboard-2kzwefkozz5grasp5w5yjp.streamlit.app/*
 
 Un dashboard interactivo que analiza tendencias de streaming musical combinando dos fuentes: el Kaggle Spotify Tracks Dataset (~600k canciones con audio features) y la Last.fm API para datos de artistas en tiempo real por país LATAM.
 
@@ -61,8 +61,9 @@ Para obtener la API key (es gratuita):
 3. Completa el formulario (nombre de app: cualquiera, ej. "music-portfolio")
 4. Copia el `API Key` generado
 
-### 4. Dataset
-El CSV ya está incluido en el repositorio en `data/kaggle_tracks.csv`.
+### 4. Descargar el dataset
+- Busca en Kaggle: **"Spotify Tracks Dataset"** (https://www.kaggle.com/datasets/saichaitanyareddyai/spotify-tracks-dataset-audio-features) y descarga el CSV
+- Colócalo en `data/kaggle_tracks.csv`
 
 ### 5. Ejecutar el dashboard
 ```bash
@@ -81,6 +82,7 @@ streamlit run app.py
    ```
 4. El dashboard con el CSV grande requiere subirlo a un lugar accesible o usar un subset. Ver nota abajo.
 
+> **Nota sobre el dataset en Streamlit Cloud:** Si el CSV de Kaggle supera los 100MB y no puede subirse directamente a GitHub. Opciones: (1) subir un subset de 50k filas al repo, (2) hospedar el CSV en Google Drive y descargarlo al iniciar la app.
 
 ---
 
@@ -104,7 +106,7 @@ spotify-trends-dashboard/
 ## Fuentes de datos
 
 - **Last.fm API** (via pylast) — top artistas por país LATAM en tiempo real, oyentes mensuales, géneros
-- **Kaggle Spotify Tracks Dataset** — ~600k canciones con audio features completas (danceability, energy, valence, etc.)
+- **Kaggle Spotify Tracks Dataset** — ~600k canciones con audio features completas (danceability, energy, valence, etc.) https://*www.kaggle.com/datasets/saichaitanyareddyai/spotify-tracks-dataset-audio-features*
 
 ---
 
