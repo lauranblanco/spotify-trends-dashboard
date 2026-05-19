@@ -2,36 +2,36 @@
 Spotify Streaming Trends Dashboard
 Laura Blanco — Music Analytics Portfolio, Proyecto 1
 
-Fuentes:
-  - Kaggle Spotify Tracks Dataset  →  audio features y popularidad
-  - Last.fm API (pylast)           →  top artistas por país LATAM en tiempo real
-
-Dataset columnas: track_id, artists, album_name, track_name, popularity,
-duration_ms, explicit, danceability, energy, key, loudness, mode,
-speechiness, acousticness, instrumentalness, liveness, valence, tempo,
-time_signature, track_genre
+Estructura:
+  Tab 1 — Audio DNA     : análisis de audio features (Kaggle, estático ~2023)
+  Tab 2 — Market Pulse  : comportamiento de usuarios en tiempo real (Last.fm)
 """
 
 import os
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
 import streamlit as st
 from dotenv import load_dotenv
+
 from utils.data_load import (
     load_kaggle_data,
     load_lastfm_top_artists,
-    AUDIO_FEATURES,
+    load_lastfm_geo_tracks,
+    load_lastfm_multi_country,
+    compute_popularity_index,
     LATAM_COUNTRIES,
 )
 from utils.statistics import (
-    section_kpis,
-    section_genre_ranking,
-    section_audio_features,
-    section_correlation,
-    section_popularity_distribution,
+    # Tab 1
+    section_audio_scatter,
+    section_correlation_audio,
     section_radar_by_genre,
-    section_top_artists,
+    # Tab 2
+    section_kpis_live,
+    section_genre_popularity_live,
+    section_genre_distribution,
+    section_top_artists_live,
+    section_top_tracks_live,
+    section_multi_country_heatmap,
+    section_cross_correlation,
 )
 
 load_dotenv()
@@ -54,8 +54,9 @@ def render_sidebar() -> dict:
     st.sidebar.header("Filtros")
 
     min_popularity = st.sidebar.slider(
-        "Popularidad mínima (dataset Kaggle)",
+        "Popularidad mínima — Kaggle",
         min_value=0, max_value=100, value=0,
+        help="Filtra las canciones del dataset por score mínimo de popularidad",
     )
 
     top_n_genres = st.sidebar.slider("Top N géneros a mostrar", 5, 25, 12)
@@ -74,7 +75,7 @@ def render_sidebar() -> dict:
     }
 
 
-def apply_filters(df: pd.DataFrame, filters: dict) -> pd.DataFrame:
+def apply_filters(df, filters):
     return df[df["popularity"] >= filters["min_popularity"]].copy()
 
 
@@ -89,6 +90,7 @@ def main():
 
     filters = render_sidebar()
 
+    # --- Carga de datos estáticos (Kaggle)
     try:
         df_raw = load_kaggle_data()
     except FileNotFoundError:
@@ -99,32 +101,66 @@ def main():
         st.stop()
 
     df = apply_filters(df_raw, filters)
-    artists_df = load_lastfm_top_artists(country_en=filters["country_en"])
 
-    section_kpis(df)
-    st.markdown("---")
-    section_genre_ranking(df, filters)
-    
-    st.markdown("---")
-    section_top_artists(artists_df, filters)
+    # --- Tabs
+    tab1, tab2 = st.tabs(["🎵 Audio DNA", "📊 Market Pulse"])
 
-    st.markdown("---")
-    section_audio_features(df)
+    # -----------------------------------------------------------------------
+    # Tab 1 — Audio DNA
+    # -----------------------------------------------------------------------
+    with tab1:
+        st.caption("Análisis de audio features · Dataset Kaggle (~2023, estático)")
+        st.markdown("---")
 
-    st.markdown("---")
-    col_corr, col_box = st.columns(2)
-    with col_corr:
-        section_correlation(df)
-    with col_box:
-        section_popularity_distribution(df, filters)
+        section_audio_scatter(df)
+        st.markdown("---")
 
-    st.markdown("---")
-    section_radar_by_genre(df)
+        col_corr, col_radar = st.columns(2)
+        with col_corr:
+            section_correlation_audio(df)
+        with col_radar:
+            section_radar_by_genre(df)
+
+    # -----------------------------------------------------------------------
+    # Tab 2 — Market Pulse
+    # -----------------------------------------------------------------------
+    with tab2:
+        st.caption("Comportamiento de usuarios · Last.fm API (en vivo, refresco cada hora)")
+        st.markdown("---")
+
+        artists_df = compute_popularity_index(
+            load_lastfm_top_artists(country_en=filters["country_en"])
+        )
+        tracks_df  = load_lastfm_geo_tracks(country_en=filters["country_en"])
+        multi_df   = load_lastfm_multi_country()
+
+        section_kpis_live(artists_df, tracks_df, filters)
+        st.markdown("---")
+
+        col_pop, col_tree = st.columns([3, 2])
+        with col_pop:
+            section_genre_popularity_live(artists_df, filters)
+        with col_tree:
+            section_genre_distribution(artists_df, filters)
+
+        st.markdown("---")
+
+        col_art, col_trk = st.columns(2)
+        with col_art:
+            section_top_artists_live(artists_df, filters)
+        with col_trk:
+            section_top_tracks_live(tracks_df, filters)
+
+        st.markdown("---")
+        section_multi_country_heatmap(multi_df)
+
+        st.markdown("---")
+        section_cross_correlation(artists_df, df)
 
     st.markdown("---")
     st.caption(
-        "Datos: Last.fm API (top artistas por país) · "
-        "Kaggle Spotify Tracks Dataset (audio features) · "
+        "Datos: Last.fm API (oyentes en tiempo real) · "
+        "Kaggle Spotify Tracks Dataset (audio features ~2023) · "
         "Laura Blanco 2026"
     )
 
