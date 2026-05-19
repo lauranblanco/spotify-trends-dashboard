@@ -3,8 +3,8 @@ Spotify Streaming Trends Dashboard
 Laura Blanco — Music Analytics Portfolio, Proyecto 1
 
 Fuentes:
-  - Kaggle Spotify Tracks Dataset → audio features y popularidad
-  - Last.fm API (pylast)          → top artistas por país LATAM en tiempo real
+  - Kaggle Spotify Tracks Dataset  →  audio features y popularidad
+  - Last.fm API (pylast)           →  top artistas por país LATAM en tiempo real
 
 Dataset columnas: track_id, artists, album_name, track_name, popularity,
 duration_ms, explicit, danceability, energy, key, loudness, mode,
@@ -18,10 +18,14 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 from dotenv import load_dotenv
-from utils.data_load import load_kaggle_data, load_lastfm_top_artists, AUDIO_FEATURES, LATAM_COUNTRIES
+from utils.data_load import (
+    load_kaggle_data,
+    load_lastfm_top_artists,
+    AUDIO_FEATURES,
+    LATAM_COUNTRIES,
+)
 
 load_dotenv()
-
 
 # ---------------------------------------------------------------------------
 # Page config
@@ -32,18 +36,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-
-# ---------------------------------------------------------------------------
-# Data loading — Kaggle dataset
-# ---------------------------------------------------------------------------
-
-@st.cache_data(show_spinner="Cargando dataset...")
-
-# ---------------------------------------------------------------------------
-# Data loading — Last.fm API
-# ---------------------------------------------------------------------------
-
-@st.cache_data(show_spinner="Consultando Last.fm...", ttl=3600)
 
 # ---------------------------------------------------------------------------
 # Sidebar — filtros globales
@@ -66,10 +58,10 @@ def render_sidebar() -> dict:
     )
 
     return {
-        "min_popularity":  min_popularity,
-        "top_n_genres":    top_n_genres,
-        "country_label":   selected_country,
-        "country_en":      LATAM_COUNTRIES[selected_country],
+        "min_popularity": min_popularity,
+        "top_n_genres":   top_n_genres,
+        "country_label":  selected_country,
+        "country_en":     LATAM_COUNTRIES[selected_country],
     }
 
 
@@ -194,8 +186,10 @@ def section_correlation(df: pd.DataFrame) -> None:
 def section_top_artists(artists_df: pd.DataFrame, filters: dict) -> None:
     st.header(f"Top artistas en {filters['country_label']} — Last.fm")
 
+    df_plot = artists_df.sort_values("listeners", ascending=True).tail(15)
+
     fig = px.bar(
-        artists_df.sort_values("listeners", ascending=True).tail(15),
+        df_plot,
         x="listeners",
         y="artist",
         orientation="h",
@@ -203,9 +197,9 @@ def section_top_artists(artists_df: pd.DataFrame, filters: dict) -> None:
         title=f"Top artistas por oyentes mensuales — {filters['country_label']}",
         labels={"listeners": "Oyentes mensuales", "artist": "Artista", "genre": "Género"},
         template="plotly_dark",
-        text=artists_df.sort_values("listeners", ascending=True)
-            .tail(15)["listeners"]
-            .apply(lambda x: f"{x/1_000_000:.1f}M" if x >= 1_000_000 else f"{x:,}"),
+        text=df_plot["listeners"].apply(
+            lambda x: f"{x/1_000_000:.1f}M" if x >= 1_000_000 else f"{x:,}"
+        ),
     )
     fig.update_traces(textposition="outside")
     fig.update_layout(height=500, showlegend=True)
@@ -251,7 +245,7 @@ def section_popularity_distribution(df: pd.DataFrame, filters: dict) -> None:
 # Section 7 — Audio features radar by genre
 # ---------------------------------------------------------------------------
 
-def section_radar_by_genre(df: pd.DataFrame, filters: dict) -> None:
+def section_radar_by_genre(df: pd.DataFrame) -> None:
     st.header("Perfil de audio features por género")
 
     available = [f for f in AUDIO_FEATURES if f in df.columns and f != "liveness"]
@@ -341,7 +335,7 @@ def main():
         section_popularity_distribution(df, filters)
 
     st.markdown("---")
-    section_radar_by_genre(df, filters)
+    section_radar_by_genre(df)
 
     st.markdown("---")
     st.caption(
