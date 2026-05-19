@@ -11,15 +11,24 @@ An interactive dashboard analyzing music streaming trends by combining two data 
 
 ## Analyses included
 
-| Section | Source | Description |
-|---------|--------|-------------|
-| Overview | Kaggle | KPIs: total tracks, genres, avg popularity, #1 track |
-| Popularity by genre | Kaggle | Horizontal bar chart: top N genres by average popularity + track count |
-| Audio features vs. popularity | Kaggle | Interactive scatter between any pair of features, colored by popularity |
-| Correlation matrix | Kaggle | Pearson correlation between all audio features and popularity |
-| Top LATAM artists | Last.fm API | Most listened artists by country (Colombia, Mexico, Argentina…) |
-| Popularity distribution | Kaggle | Box plot: popularity spread by genre (median, IQR, outliers) |
-| Audio features radar | Kaggle | Comparative profile of average features across selected genres |
+| Section | Source | Type | Description |
+|---------|--------|------|-------------|
+| Overview | Kaggle | 📸 Static | KPIs: total tracks, genres, avg popularity, #1 track |
+| Popularity by genre | Kaggle | 📸 Static | Horizontal bar chart: top N genres by average popularity + track count |
+| Audio features vs. popularity | Kaggle | 📸 Static | Interactive scatter between any pair of features, colored by popularity |
+| Correlation matrix | Kaggle | 📸 Static | Pearson correlation between all audio features and popularity |
+| Top LATAM artists | Last.fm API | 🔄 Live | Most listened artists by country (Colombia, Mexico, Argentina…) |
+| Popularity distribution | Kaggle | 📸 Static | Box plot: popularity spread by genre (median, IQR, outliers) |
+| Audio features radar | Kaggle | 📸 Static | Comparative profile of average features across selected genres |
+
+## Data scope & freshness
+
+| Source | Period | Updates |
+|--------|--------|---------|
+| Kaggle Spotify Tracks Dataset | Snapshot collected ~2023 | Static — only updates if the CSV is manually replaced |
+| Last.fm API (top artists) | Current | Live — refreshes every hour per country |
+
+> **Note:** Popularity scores, genre rankings, and all audio feature analyses reflect the state of the Kaggle dataset at the time of collection (~2023). They are not connected to real-time Spotify data. Only the "Top LATAM Artists" section reflects current listening trends via Last.fm.
 
 ---
 

@@ -11,15 +11,24 @@ Un dashboard interactivo que analiza tendencias de streaming musical combinando 
 
 ## Análisis incluidos
 
-| Sección | Fuente | Descripción |
-|---------|--------|-------------|
-| Visión general | Kaggle | KPIs: total canciones, géneros, popularidad promedio, track #1 |
-| Popularidad por género | Kaggle | Bar chart horizontal: top N géneros por popularidad promedio + nº tracks |
-| Audio features vs. popularidad | Kaggle | Scatter interactivo entre cualquier par de features, coloreado por popularidad |
-| Matriz de correlación | Kaggle | Correlación de Pearson entre audio features y popularidad |
-| Top artistas LATAM | Last.fm API | Artistas más escuchados por país (Colombia, México, Argentina…) |
-| Distribución de popularidad | Kaggle | Box plot: spread de popularidad por género (mediana, IQR, outliers) |
-| Radar de audio features | Kaggle | Perfil comparativo de features promedio entre géneros seleccionados |
+| Sección | Fuente | Tipo | Descripción |
+|---------|--------|------|-------------|
+| Visión general | Kaggle | 📸 Estático | KPIs: total canciones, géneros, popularidad promedio, track #1 |
+| Popularidad por género | Kaggle | 📸 Estático | Bar chart horizontal: top N géneros por popularidad promedio + nº tracks |
+| Audio features vs. popularidad | Kaggle | 📸 Estático | Scatter interactivo entre cualquier par de features, coloreado por popularidad |
+| Matriz de correlación | Kaggle | 📸 Estático | Correlación de Pearson entre audio features y popularidad |
+| Top artistas LATAM | Last.fm API | 🔄 En vivo | Artistas más escuchados por país (Colombia, México, Argentina…) |
+| Distribución de popularidad | Kaggle | 📸 Estático | Box plot: spread de popularidad por género (mediana, IQR, outliers) |
+| Radar de audio features | Kaggle | 📸 Estático | Perfil comparativo de features promedio entre géneros seleccionados |
+
+## Alcance temporal de los datos
+
+| Fuente | Período | Actualización |
+|--------|---------|---------------|
+| Kaggle Spotify Tracks Dataset | Snapshot recopilado ~2023 | Estático — solo cambia si se reemplaza el CSV manualmente |
+| Last.fm API (top artistas) | Actualidad | En vivo — se refresca cada hora por país |
+
+> **Nota:** Los scores de popularidad, el ranking de géneros y todos los análisis de audio features reflejan el estado del dataset de Kaggle al momento de su recopilación (~2023). No están conectados a datos de Spotify en tiempo real. Solo la sección "Top artistas LATAM" refleja tendencias de escucha actuales vía Last.fm.
 
 ---
 

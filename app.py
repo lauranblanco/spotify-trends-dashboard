@@ -109,6 +109,9 @@ def main():
         section_genre_ranking(df, filters)
     with col_right:
         section_top_artists(artists_df, filters)
+    
+    st.markdown("---")
+    section_top_artists(artists_df, filters)
 
     st.markdown("---")
     section_audio_features(df)
