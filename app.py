@@ -103,12 +103,7 @@ def main():
 
     section_kpis(df)
     st.markdown("---")
-
-    col_left, col_right = st.columns([3, 2])
-    with col_left:
-        section_genre_ranking(df, filters)
-    with col_right:
-        section_top_artists(artists_df, filters)
+    section_genre_ranking(df, filters)
     
     st.markdown("---")
     section_top_artists(artists_df, filters)
