@@ -33,6 +33,7 @@ LATAM_COUNTRIES = {
 # Data loading — Kaggle dataset
 # ---------------------------------------------------------------------------
 
+@st.cache_data(show_spinner="Cargando dataset...")
 def load_kaggle_data(path: str = "data/kaggle_tracks.csv") -> pd.DataFrame:
     df = pd.read_csv(path)
     df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
@@ -52,6 +53,7 @@ def load_kaggle_data(path: str = "data/kaggle_tracks.csv") -> pd.DataFrame:
 # Data loading — Last.fm API
 # ---------------------------------------------------------------------------
 
+@st.cache_data(show_spinner="Consultando Last.fm...", ttl=3600)
 def load_lastfm_top_artists(country_en: str, limit: int = 20) -> pd.DataFrame:
     api_key = os.getenv("LASTFM_API_KEY") or st.secrets.get("LASTFM_API_KEY", None)
 
